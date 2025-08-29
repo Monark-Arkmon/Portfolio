@@ -1,0 +1,28 @@
+.astronaut-container {
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+  border-radius: 8px;
+}
+
+.bouncing-astronaut {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  transition: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .bouncing-astronaut {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+  }
+  
+  .astronaut-container::before {
+    animation-duration: 15s;
+  }
+}
