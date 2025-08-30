@@ -2,9 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Model as EarthModel } from './Earth';
 import BouncingAstronaut from './BouncingAstronaut';
+import { useJsonAsset } from './utils/useAssets';
+import { MorphingText } from './components/morphing-text';
+import { ShimmerButton } from './components/shimmer-button';
+import { InteractiveHoverButton } from './components/interactive-hover-button';
 import './Hero.css';
 
 const Hero: React.FC = () => {
+  // Load asset configurations from JSON
+  const { data: heroConfig, loading: heroLoading } = useJsonAsset('hero.json');
+  const { data: assetsConfig, loading: assetsLoading } = useJsonAsset('assets.json');
+
+  // Parse hero data for easy access
+  const personalData = heroConfig?.personal;
+  const heroData = heroConfig?.hero;
+  const layoutData = heroConfig?.layout;
+  const responsiveConfig = layoutData?.responsive;
+
+  // Parse assets data for easy access  
+  const documentsData = assetsConfig?.documents;
+
   const [screenSize, setScreenSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 1920,
     height: typeof window !== 'undefined' ? window.innerHeight : 1080,
@@ -40,48 +57,57 @@ const Hero: React.FC = () => {
     if (isMobile) {
       return null;
     }
+
+    // Return null if responsive config is not loaded yet
+    if (!responsiveConfig) {
+      return null;
+    }
     
     // Calculate canvas dimensions based on layout
     let canvasWidth, canvasHeight;
+    let config;
     
     if (isTablet) {
-      // Tablet: canvas takes 60% width in row layout  
-      canvasWidth = width * 0.6;
+      config = responsiveConfig.tablet;
+      const containerWidth = width * config.canvasWidthPercent;
+      canvasWidth = Math.floor(containerWidth);
       canvasHeight = height;
       
       return {
-        cameraPosition: [0, 0, 25] as [number, number, number],
-        modelPosition: [8, 0, 0] as [number, number, number],
-        modelScale: 1.8,
+        cameraPosition: config.cameraPosition as [number, number, number],
+        modelPosition: config.modelPosition as [number, number, number],
+        modelScale: config.modelScale,
         canvasWidth,
         canvasHeight,
-        fov: 55
+        fov: config.fov
       };
     } else if (isLaptop) {
-      // Laptop: canvas takes 62% width in row layout
-      canvasWidth = width * 0.62;
+      config = responsiveConfig.laptop;
+      const containerWidth = width * config.canvasWidthPercent;
+      canvasWidth = Math.floor(containerWidth);
       canvasHeight = height;
       
       return {
-        cameraPosition: [0, 0, 24] as [number, number, number],
-        modelPosition: [7, 0, 0] as [number, number, number],
-        modelScale: 1.5,
+        cameraPosition: config.cameraPosition as [number, number, number],
+        modelPosition: config.modelPosition as [number, number, number],
+        modelScale: config.modelScale,
         canvasWidth,
         canvasHeight,
-        fov: 52
+        fov: config.fov
       };
     } else {
-      // Desktop: canvas takes 65% width in row layout
-      canvasWidth = width * 0.65;
+      config = responsiveConfig.desktop;
+      const containerWidth = width * config.canvasWidthPercent;
+      canvasWidth = Math.floor(containerWidth);
       canvasHeight = height;
       
       return {
-        cameraPosition: [0, 0, 22] as [number, number, number],
-        modelPosition: [6, 0, 0] as [number, number, number],
-        modelScale: 0.95,
+        cameraPosition: config.cameraPosition as [number, number, number],
+        modelPosition: config.modelPosition as [number, number, number],
+        modelScale: config.modelScale,
         canvasWidth,
         canvasHeight,
-        fov: 50
+        fov: config.fov
       };
     }
   };
@@ -97,24 +123,91 @@ const Hero: React.FC = () => {
 
   const config = getResponsiveConfig();
 
+  // Don't render until all required data is loaded
+  if (heroLoading || assetsLoading || !heroConfig || !assetsConfig) {
+    return <div>Loading...</div>;
+  }
+
+  // Get current responsive configuration
+  const getCurrentConfig = () => {
+    if (screenSize.isMobile) return responsiveConfig?.mobile;
+    if (screenSize.isTablet) return responsiveConfig?.tablet;
+    if (screenSize.isLaptop) return responsiveConfig?.laptop;
+    return responsiveConfig?.desktop;
+  };
+
+  const currentConfig = getCurrentConfig();
+
+  // Handle button actions
+  const handleContactClick = () => {
+    if (personalData?.email) {
+      window.location.href = `mailto:${personalData.email}`;
+    }
+  };
+
+  const handleDownloadCV = () => {
+    if (documentsData?.cv) {
+      // Use the asset path directly - the asset manager should handle this
+      const link = document.createElement('a');
+      link.href = `/${documentsData.cv}`;
+      link.download = 'CV_Arkapratim_Mondal.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Dynamic CSS custom properties
+  const dynamicStyles = {
+    '--astronaut-height-percent': `${(currentConfig?.astronautSectionHeightPercent || 0.6) * 100}%`,
+    '--text-height-percent': `${(currentConfig?.textSectionHeightPercent || 0.4) * 100}%`,
+    '--content-width-percent': `${((1 - (currentConfig?.canvasWidthPercent || 0.65)) * 100).toFixed(1)}%`,
+    '--canvas-width-percent': `${((currentConfig?.canvasWidthPercent || 0.65) * 100).toFixed(1)}%`,
+  } as React.CSSProperties;
+
   return (
-    <div className="hero-container">
+    <div className="hero-container" style={dynamicStyles}>
       <div className="hero-content">
-        {/* Astronaut Animation Section - Top 65% for tablet/laptop/desktop, 50% for mobile */}
+        {/* Astronaut Animation Section - Using responsive config */}
         <div className="hero-astronaut-section">
           <BouncingAstronaut 
-            containerWidth={screenSize.isMobile ? screenSize.width : screenSize.width * 0.35}
-            containerHeight={screenSize.isMobile ? screenSize.height * 0.5 : screenSize.height * 0.65}
+            containerWidth={screenSize.isMobile 
+              ? screenSize.width * (responsiveConfig?.mobile?.astronautContainerWidthPercent)
+              : screenSize.width * (responsiveConfig?.[screenSize.isTablet ? 'tablet' : screenSize.isLaptop ? 'laptop' : 'desktop']?.astronautContainerWidthPercent)
+            }
+            containerHeight={screenSize.isMobile 
+              ? screenSize.height * (responsiveConfig?.mobile?.astronautSectionHeightPercent)
+              : screenSize.height * (responsiveConfig?.[screenSize.isTablet ? 'tablet' : screenSize.isLaptop ? 'laptop' : 'desktop']?.astronautSectionHeightPercent)
+            }
             screenType={getScreenType()}
           />
         </div>
         
-        {/* Text Content Section - Bottom 35% for tablet/laptop/desktop, 50% for mobile */}
+        {/* Text Content Section - Using hero data from JSON */}
         <div className="hero-text-section">
           <div className="hero-text">
-            <h1>Welcome to My Portfolio</h1>
-            <p>I'm a developer passionate about creating amazing experiences</p>
-            <button className="cta-button">Get In Touch</button>
+            {/* Title with name */}
+            <h1 className="hero-title">
+              {heroData?.title} {personalData?.name}
+            </h1>
+            
+            {/* Morphing titles animation */}
+            <div className="morphing-titles">
+              <MorphingText 
+                texts={personalData?.titles} 
+              />
+            </div>
+            
+            {/* Action buttons */}
+            <div className="hero-buttons">
+              <ShimmerButton className="contact-button" onClick={handleContactClick}>
+                {heroData?.callToAction?.primary}
+              </ShimmerButton>
+              
+              <InteractiveHoverButton className="download-button" onClick={handleDownloadCV}>
+                {heroData?.callToAction?.secondary}
+              </InteractiveHoverButton>
+            </div>
           </div>
         </div>
       </div>

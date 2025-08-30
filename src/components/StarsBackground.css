@@ -1,0 +1,49 @@
+/* Stars Background Styles - Universal Background */
+.stars-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at bottom, #262626 0%, #000000 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.star-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 300vh;
+  will-change: transform;
+}
+
+.star-dot {
+  position: absolute;
+  background: transparent;
+  border-radius: 50%;
+}
+
+.star-dot-duplicate {
+  position: absolute;
+  background: transparent;
+  border-radius: 50%;
+  top: 2000px;
+}
+
+.stars-no-pointer-events {
+  pointer-events: none;
+}
+
+/* Performance optimizations */
+.star-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.stars-background {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

@@ -1,7 +1,7 @@
 .astronaut-container {
   position: relative;
   overflow: hidden;
-  background: #000000;
+  background: transparent;
   border-radius: 8px;
 }
 

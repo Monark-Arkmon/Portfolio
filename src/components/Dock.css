@@ -1,0 +1,93 @@
+/* Dock Component Styles */
+
+.dock-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  overflow: visible;
+}
+
+.dock {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 4px 12px;
+  background: #141414;
+  border-radius: 12px;
+  gap: 6px;
+  min-width: max-content;
+  height: 60px;
+  overflow: visible;
+}
+
+/* Dock icons*/
+.dock-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: visible;
+  background-color: transparent;
+  border: none;
+  transform-origin: center bottom;
+}
+
+/* Separator styles */
+.dock-separator {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 4px;
+  align-self: center;
+}
+
+/* Tooltip styles */
+.dock-tooltip {
+  position: absolute;
+  left: 50%;
+  top: -24px;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background-color: #141414;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dock-container {
+    bottom: 16px;
+  }
+  
+  .dock {
+    padding: 6px;
+    border-radius: 20px;
+    gap: 4px;
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dock {
+    padding: 4px;
+    border-radius: 18px;
+    gap: 2px;
+    min-height: 52px;
+  }
+  
+  .dock-separator {
+    height: 28px;
+  }
+}

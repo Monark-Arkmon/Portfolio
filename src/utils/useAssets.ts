@@ -111,7 +111,52 @@ export function useImageAsset(
 }
 
 /**
- * Hook for fetching texture URLs (for Three.js)
+ * Hook for fetching texture URLs from JSON paths (for Three.js)
+ */
+export function useTextureAssetsFromPaths(paths: string[] | null): AssetState<string[]> {
+  const [data, setData] = useState<string[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Memoize the paths array to prevent unnecessary re-renders
+  const memoizedPaths = useMemo(() => paths, [paths ? paths.join(',') : null]);
+
+  const fetchData = useCallback(async () => {
+    if (!memoizedPaths || memoizedPaths.length === 0) {
+      setData(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const urls = await assetManager.fetchTextureUrlsFromPaths(memoizedPaths);
+      setData(urls);
+      setLoading(false);
+    } catch (error) {
+      setData(null);
+      setLoading(false);
+      setError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }, [memoizedPaths]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchData
+  };
+}
+
+/**
+ * Hook for fetching texture URLs (for Three.js) - legacy method
  */
 export function useTextureAssets(names: string[] | null): AssetState<string[]> {
   const [data, setData] = useState<string[] | null>(null);
@@ -142,6 +187,48 @@ export function useTextureAssets(names: string[] | null): AssetState<string[]> {
       setError(error instanceof Error ? error : new Error('Unknown error'));
     }
   }, [memoizedNames]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchData
+  };
+}
+
+/**
+ * Hook for fetching image URL from JSON path
+ */
+export function useImageAssetFromPath(path: string | null): AssetState<string> {
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!path) {
+      setData(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const url = await assetManager.fetchImageUrlFromPath(path);
+      setData(url);
+      setLoading(false);
+    } catch (error) {
+      setData(null);
+      setLoading(false);
+      setError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }, [path]);
 
   useEffect(() => {
     fetchData();

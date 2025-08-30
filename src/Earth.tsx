@@ -1,8 +1,8 @@
-import React, { useRef, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { TextureLoader } from "three";
-import { useJsonAsset, useTextureAssets } from "./utils/useAssets";
+import { useJsonAsset, useTextureAssetsFromPaths } from "./utils/useAssets";
 
 interface ModelProps {
   position?: [number, number, number];
@@ -15,8 +15,8 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
   // Load asset configuration from JSON
   const { data: assetsConfig } = useJsonAsset('assets.json');
   
-  // Load texture URLs using the asset system
-  const { data: textureUrls } = useTextureAssets(
+  // Load texture URLs using the new path-based asset system
+  const { data: textureUrls } = useTextureAssetsFromPaths(
     assetsConfig ? [
       assetsConfig.earth.textures.dayMap,
       assetsConfig.earth.textures.nightMap,
@@ -52,9 +52,6 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
       ? new THREE.Vector3(...assetsConfig.earth.materials.lightDirection).normalize()
       : new THREE.Vector3(1.0, 0.1, 0.0).normalize();
     const initialYRotation = assetsConfig?.earth.materials?.initialYRotation; 
-    
-    // Calculate responsive sizes based on canvas dimensions and scale
-    const aspectRatio = canvasWidth / canvasHeight;
     
     // Base earth radius calculations based on canvas size
     const canvasMinDimension = Math.min(canvasWidth, canvasHeight);

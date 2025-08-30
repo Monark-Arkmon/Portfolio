@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useJsonAsset, useImageAsset } from './utils/useAssets';
+import { useJsonAsset, useImageAssetFromPath } from './utils/useAssets';
 import './BouncingAstronaut.css';
 
 interface BouncingAstronautProps {
@@ -12,8 +12,8 @@ const BouncingAstronaut: React.FC<BouncingAstronautProps> = ({ containerWidth, c
   // Load asset configuration from JSON
   const { data: assetsConfig, loading: configLoading } = useJsonAsset('assets.json');
   
-  // Load astronaut image using the asset system
-  const { data: astronautImageUrl, loading: imageLoading } = useImageAsset(
+  // Load astronaut image using the new path-based asset system
+  const { data: astronautImageUrl, loading: imageLoading } = useImageAssetFromPath(
     assetsConfig?.astronaut?.image || null
   );
 

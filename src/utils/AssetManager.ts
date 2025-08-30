@@ -38,11 +38,18 @@ export interface AssetRequest {
 class AssetManager {
   private config: AssetConfig;
   private cache: Map<string, any> = new Map();
-  private isProduction: boolean;
 
   constructor(config: AssetConfig) {
     this.config = config;
-    this.isProduction = process.env.NODE_ENV === 'production';
+  }
+
+  /**
+   * Get the full URL for an asset with a direct path from JSON
+   * This method treats the name as a complete path relative to baseUrl
+   */
+  private getDirectAssetUrl(path: string): string {
+    const baseUrl = this.config.local.baseUrl;
+    return `${baseUrl}/${path}`;
   }
 
   /**
@@ -151,14 +158,35 @@ class AssetManager {
   }
 
   /**
-   * Fetch multiple textures at once
+   * Fetch multiple textures from JSON paths at once
+   */
+  async fetchTextureUrlsFromPaths(paths: string[]): Promise<string[]> {
+    return paths.map(path => this.getDirectAssetUrl(path));
+  }
+
+  /**
+   * Fetch multiple textures at once - legacy method
    */
   async fetchTextureUrls(names: string[]): Promise<string[]> {
     return names.map(name => this.getAssetUrl({ name, type: 'texture' }));
   }
 
   /**
-   * Fetch document (PDF, DOC, etc.)
+   * Fetch image URL from JSON path
+   */
+  async fetchImageUrlFromPath(path: string): Promise<string> {
+    return this.getDirectAssetUrl(path);
+  }
+
+  /**
+   * Fetch document URL from JSON path
+   */
+  async fetchDocumentUrlFromPath(path: string): Promise<string> {
+    return this.getDirectAssetUrl(path);
+  }
+
+  /**
+   * Fetch document (PDF, DOC, etc.) - legacy method
    */
   async fetchDocumentUrl(name: string, folder?: string): Promise<string> {
     const request: AssetRequest = { name, type: 'document', folder };
