@@ -1,0 +1,165 @@
+/* Skills Marquee Container */
+.skills-marquee-container {
+  width: 100%;
+  padding: 2rem 0;
+  background: transparent;
+  position: relative;
+  padding-top: 3rem;
+}
+
+.skills-marquee-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+}
+
+/* Marquee Row */
+.marquee-row {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  --gap: 1.5rem;
+  overflow-y: visible;
+}
+
+.marquee-content {
+  display: flex;
+  gap: var(--gap);
+  animation: skills-marquee var(--duration, 40s) infinite linear;
+  white-space: nowrap;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation-delay: 0s;
+  width: max-content;
+}
+
+.marquee-content.reverse {
+  animation-direction: reverse;
+}
+
+/* Pause animation on hover */
+.marquee-row:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+/* Skill Card */
+.skill-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 12px;
+  background: #222222;
+  border: 1px solid #5f5f5f;
+  transition: all 0.3s ease;
+  min-width: 230px;
+  min-height: 150px;
+  white-space: nowrap;
+  overflow: visible;
+  z-index: 1;
+}
+
+.skill-card:hover {
+  background-color: #2E2F2F;
+  border-color: #606060;
+}
+
+/* Skill Logo Image */
+.skill-logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+/* Floating Tooltip (rendered outside clipped containers) */
+.skill-tooltip-floating {
+  padding: 4px 8px;
+  background-color: #141414;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+/* Keyframe Animation */
+@keyframes skills-marquee {
+  0% { 
+    transform: translate3d(0, 0, 0); 
+  }
+  100% { 
+    transform: translate3d(-33.333%, 0, 0); 
+  }
+}/* Responsive Design */
+@media (max-width: 768px) {
+  .skills-marquee-container {
+    padding: 1.5rem 0;
+  }
+  
+  .skills-marquee-wrapper {
+    gap: 2.5rem;
+  }
+  
+  .skill-card {
+    padding: 8px;
+    min-width: 140px; /* Increased from 70px */
+    min-height: 100px; /* Increased from 70px */
+    border-radius: 10px;
+  }
+  
+  .skill-logo {
+    width: 80px; /* Increased from 40px */
+    height: 80px; /* Increased from 40px */
+  }
+
+  .skill-tooltip {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-marquee-wrapper {
+    gap: 2rem;
+  }
+  
+  .skill-card {
+    padding: 6px;
+    min-width: 120px; /* Increased from 60px */
+    min-height: 85px; /* Increased from 60px */
+    border-radius: 8px;
+  }
+  
+  .skill-logo {
+    width: 64px; /* Increased from 36px */
+    height: 64px; /* Increased from 36px */
+  }
+
+  .skill-tooltip {
+    font-size: 0.75rem;
+    padding: 4px 6px;
+  }
+}

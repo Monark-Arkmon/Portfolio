@@ -1,4 +1,5 @@
 import Hero from './Hero'
+import About from './About'
 import { StarsBackground } from './components/StarsBackground'
 import Dock from './components/Dock'
 import './App.css'
@@ -21,15 +22,7 @@ function App() {
 
       {/* About Section */}
       <section id="about" className="content-section about-section">
-        <div className="section-content">
-          <h2>About Me</h2>
-          <p>
-            Lorem Ipsum XD
-          </p>
-          <p>
-            Sample
-          </p>
-        </div>
+        <About />
       </section>
       
       {/* Fixed Dock - stays at bottom */}

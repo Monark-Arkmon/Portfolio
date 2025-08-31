@@ -1,0 +1,264 @@
+/* About Component Styles */
+.about-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  background: transparent;
+  --about-text-width-percent: 30%;
+  --skills-carousel-width-percent: 70%;
+  --top-section-height-percent: 40%;
+  --bottom-canvas-height-percent: 60%;
+}
+
+/* Top Section - 40% height */
+.about-top-section {
+  flex: 0 0 var(--top-section-height-percent);
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+}
+
+/* About Text Section - 30% width on desktop */
+.about-text-section {
+  flex: 0 0 var(--about-text-width-percent);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 2rem 2rem 4rem; /* More left padding, extra top padding */
+  color: white;
+  width: var(--about-text-width-percent);
+  max-width: var(--about-text-width-percent);
+  box-sizing: border-box;
+}
+
+.about-text {
+  text-align: left;
+  width: 100%;
+  max-width: 500px; /* Constrain max width for better readability */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem; /* Increased gap */
+}
+
+.about-title {
+  font-size: 3rem; /* Increased from 2.5rem */
+  font-weight: 800; /* Increased weight */
+  margin-bottom: 0;
+  line-height: 1.1; /* Tighter line height */
+  background: linear-gradient(45deg, #ffffff, #e0e0e0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  width: 100%;
+  text-align: left;
+  letter-spacing: -0.02em; /* Slight negative letter spacing */
+}
+
+.about-description {
+  font-size: 1.125rem; /* Slightly increased from 1.1rem */
+  line-height: 1.7; /* More comfortable line height */
+  color: rgba(255, 255, 255, 0.85); /* Slightly more opaque */
+  margin: 0;
+  text-align: left;
+  font-weight: 400;
+  max-width: 100%;
+  letter-spacing: 0.01em; /* Slight positive letter spacing for readability */
+}
+
+/* Skills Carousel Section - 70% width on desktop */
+.skills-carousel-section {
+  flex: 0 0 var(--skills-carousel-width-percent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: var(--skills-carousel-width-percent);
+  max-width: var(--skills-carousel-width-percent);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.skills-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom Section - 60% height, Moon Canvas */
+.about-bottom-section {
+  flex: 0 0 var(--bottom-canvas-height-percent);
+  position: relative;
+  overflow: hidden;
+  z-index: 5;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.moon-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  mask: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.1) 3%, rgba(0, 0, 0, 0.7) 8%, rgba(0, 0, 0, 1) 15%);
+  -webkit-mask: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.1) 3%, rgba(0, 0, 0, 0.7) 8%, rgba(0, 0, 0, 1) 15%);
+}
+
+/* Ensure canvas element doesn't overflow */
+.moon-canvas > div {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Responsive Design */
+
+/* Tablet screens (769px to 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .about-container {
+    --about-text-width-percent: 35%;
+    --skills-carousel-width-percent: 65%;
+  }
+  
+  .about-title {
+    font-size: 2.2rem;
+  }
+  
+  .about-description {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile screens (up to 768px) */
+@media (max-width: 768px) {
+  .about-container {
+    --about-text-width-percent: 100%;
+    --skills-carousel-width-percent: 100%;
+    --top-section-height-percent: 100%; /* Full height for content on mobile */
+    --bottom-canvas-height-percent: 0%; /* No space for canvas on mobile */
+  }
+  
+  .about-top-section {
+    flex-direction: column;
+  }
+  
+  .about-text-section {
+    flex: 0 0 50%;
+    padding: 2rem 1.5rem 1rem 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  
+  .about-text {
+    max-width: none;
+  }
+  
+  .skills-carousel-section {
+    flex: 0 0 50%;
+    padding: 1rem 1.5rem 2rem 1.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .about-title {
+    font-size: 2.25rem;
+    text-align: center; /* Center align header on mobile */
+  }
+  
+  .about-text {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .about-description {
+    font-size: 0.95rem;
+    text-align: center; /* Justified text on mobile */
+    line-height: 1.6;
+  }
+  
+  .skills-placeholder {
+    font-size: 1rem;
+    padding: 1.5rem;
+  }
+  
+  /* Hide moon canvas on mobile */
+  .about-bottom-section,
+  .moon-canvas {
+    display: none;
+  }
+}
+
+/* Small mobile screens (up to 480px) */
+@media (max-width: 480px) {
+  .about-text-section {
+    padding: 0.75rem;
+  }
+  
+  .skills-carousel-section {
+    padding: 0.75rem;
+  }
+  
+  .about-title {
+    font-size: 1.8rem;
+  }
+  
+  .about-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .skills-placeholder {
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+}
+
+/* Landscape mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+  .about-container {
+    --top-section-height-percent: 45%;
+    --bottom-canvas-height-percent: 55%;
+  }
+  
+  .about-text-section {
+    padding: 1rem;
+  }
+  
+  .skills-carousel-section {
+    padding: 1rem;
+  }
+  
+  .about-title {
+    font-size: 1.6rem;
+  }
+  
+  .about-description {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  
+  .skills-placeholder {
+    font-size: 0.8rem;
+    padding: 0.75rem;
+  }
+}
