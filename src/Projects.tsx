@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProjectGrid from './components/ProjectGrid';
-import projectsData from '@/data/projects.json';
+import { useJsonAsset } from './utils/useAssets';
 import './Projects.css';
 
 interface Project {
@@ -12,8 +12,13 @@ interface Project {
   imagePath: string;
 }
 
+interface ProjectsData {
+  projects: Project[];
+}
+
 const Projects: React.FC = () => {
-  const projects: Project[] = projectsData.projects;
+  // Load projects data from Cloudflare R2
+  const { data: projectsData, loading: projectsLoading, error: projectsError } = useJsonAsset<ProjectsData>('projects.json');
   
   // Screen size state management similar to About and Hero components
   const [screenSize, setScreenSize] = useState({
@@ -60,7 +65,11 @@ const Projects: React.FC = () => {
 
       {/* Projects Grid Section - 80% width on desktop */}
       <div className="projects-grid-section">
-        <ProjectGrid projects={projects} screenSize={screenSize} />
+        {projectsLoading && <div>Loading projects...</div>}
+        {projectsError && <div>Error loading projects: {projectsError.message}</div>}
+        {projectsData && (
+          <ProjectGrid projects={projectsData.projects} screenSize={screenSize} />
+        )}
       </div>
     </section>
   );
