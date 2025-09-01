@@ -51,7 +51,6 @@ const MarqueeRow: React.FC<MarqueeRowProps> = ({
   resolvedImageUrls,
   reverse = false, 
   duration = "40s",
-  pauseOnHover = false,
   onHover
 }) => {
   return (
@@ -111,7 +110,7 @@ export const SkillsMarquee: React.FC<SkillsMarqueeProps> = ({
       const rect = event.currentTarget.getBoundingClientRect();
       setTooltipPosition({
         x: rect.left + rect.width / 2,
-        y: rect.top - 15
+        y: rect.top - 8
       });
     } else {
       setTooltipPosition(null);

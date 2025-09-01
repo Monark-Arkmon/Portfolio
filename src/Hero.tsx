@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Model as EarthModel } from './Earth';
 import BouncingAstronaut from './BouncingAstronaut';
 import { useJsonAsset } from './utils/useAssets';
-import { MorphingText } from './components/morphing-text';
+import TextMorph from './components/text-morph';
 import { ShimmerButton } from './components/shimmer-button';
 import { InteractiveHoverButton } from './components/interactive-hover-button';
 import './Hero.css';
@@ -187,19 +187,20 @@ const Hero: React.FC = () => {
         <div className="hero-text-section">
           <div className="hero-text">
             {/* Title with name */}
-            <h1 className="hero-title">
+            <h1 className="hero-title fade-in-up">
               {heroData?.title} {personalData?.name}
             </h1>
             
             {/* Morphing titles animation */}
-            <div className="morphing-titles">
-              <MorphingText 
-                texts={personalData?.titles} 
+            <div className="morphing-titles fade-in-up-delay-1">
+              <TextMorph 
+                texts={personalData?.titles || []}
+                morphDelay={2.5}
               />
             </div>
             
             {/* Action buttons */}
-            <div className="hero-buttons">
+            <div className="hero-buttons fade-in-up-delay-2">
               <ShimmerButton className="contact-button" onClick={handleContactClick}>
                 {heroData?.callToAction?.primary}
               </ShimmerButton>

@@ -1,30 +1,27 @@
 /**
- * AssetManager - A robust asset fetching system
+ * AssetManager - Clou  constructor(config: AssetConfig) {
+    if (!config.r2.baseUrl) {
+      throw new Error('VITE_R2_BASE_URL environment variable is required but not set');
+    }
+    
+    this.config = config;
+    // Debug log to show Cloudflare R2 bucket
+    console.log(`☁️ AssetManager: Using Cloudflare R2 at ${this.config.r2.baseUrl}`);
+    if (this.config.r2.bucketName) {
+      console.log(`📦 R2 Bucket: ${this.config.r2.bucketName}`);
+    }
+  }2 Asset Management System
  * 
  * Supports: JSON, Images (PNG, JPG, SVG), PDFs, and other file types
- * Currently uses local assets, easily convertible to Cloudflare R2
+ * All assets are served from Cloudflare R2 bucket
  */
 
 export interface AssetConfig {
-  // Local development configuration
-  local: {
+  // Cloudflare R2 bucket configuration
+  r2: {
     baseUrl: string;
-    folders: {
-      textures: string;
-      images: string;
-      assets: string;
-      data: string;
-      documents: string;
-    };
+    bucketName?: string; // Optional for logging/debugging
   };
-  // Future Cloudflare R2 configuration (commented for now)
-  // cloudflare: {
-  //   baseUrl: string;
-  //   bucketName: string;
-  //   accountId: string;
-  //   accessKeyId?: string;
-  //   secretAccessKey?: string;
-  // };
 }
 
 export type AssetType = 'json' | 'image' | 'texture' | 'document' | 'asset';
@@ -41,46 +38,50 @@ class AssetManager {
 
   constructor(config: AssetConfig) {
     this.config = config;
+    // Debug log to show Cloudflare R2 bucket
+    console.log(`☁️ AssetManager: Using Cloudflare R2 at ${this.config.r2.baseUrl}`);
+    if (this.config.r2.bucketName) {
+      console.log(`� R2 Bucket: ${this.config.r2.bucketName}`);
+    }
   }
 
   /**
    * Get the full URL for an asset with a direct path from JSON
-   * This method treats the name as a complete path relative to baseUrl
+   * This method treats the name as a complete path relative to R2 baseUrl
    */
   private getDirectAssetUrl(path: string): string {
-    const baseUrl = this.config.local.baseUrl;
-    return `${baseUrl}/${path}`;
+    return `${this.config.r2.baseUrl}/${path}`;
   }
 
   /**
-   * Get the full URL for an asset
+   * Get the full URL for an asset from Cloudflare R2
    */
   private getAssetUrl(request: AssetRequest): string {
     const { name, type, folder } = request;
     
-    // For now, use local assets only
-    const baseUrl = this.config.local.baseUrl;
+    const baseUrl = this.config.r2.baseUrl;
     let folderPath: string;
 
     if (folder) {
       folderPath = folder;
     } else {
+      // Map asset types to their R2 folder structure
       switch (type) {
         case 'texture':
-          folderPath = this.config.local.folders.textures;
+          folderPath = 'textures';
           break;
         case 'image':
         case 'asset':
-          folderPath = this.config.local.folders.assets;
+          folderPath = 'assets';
           break;
         case 'json':
-          folderPath = this.config.local.folders.data;
+          folderPath = 'data';
           break;
         case 'document':
-          folderPath = this.config.local.folders.documents;
+          folderPath = 'documents';
           break;
         default:
-          folderPath = this.config.local.folders.assets;
+          folderPath = 'assets';
       }
     }
 
@@ -248,31 +249,13 @@ class AssetManager {
     };
   }
 
-  // Future Cloudflare R2 methods (commented for now)
-  /*
-  private async fetchFromCloudflare(request: AssetRequest): Promise<string> {
-    // Implementation for Cloudflare R2 fetching
-    // Will be uncommented and implemented when moving to production
-  }
-
-  private getCloudflareUrl(request: AssetRequest): string {
-    // Implementation for Cloudflare URL generation
-    // Will be uncommented and implemented when moving to production
-  }
-  */
 }
 
-// Default configuration
+// Configuration for Cloudflare R2 bucket
 const defaultConfig: AssetConfig = {
-  local: {
-    baseUrl: '/src',
-    folders: {
-      textures: 'textures',
-      images: 'assets',
-      assets: 'assets',
-      data: 'data',
-      documents: 'documents'
-    }
+  r2: {
+    baseUrl: import.meta.env.VITE_R2_BASE_URL!,
+    bucketName: 'myverypublicstorage'
   }
 };
 

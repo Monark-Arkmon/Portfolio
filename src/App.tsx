@@ -1,5 +1,6 @@
 import Hero from './Hero'
 import About from './About'
+import Projects from './Projects'
 import { StarsBackground } from './components/StarsBackground'
 import Dock from './components/Dock'
 import './App.css'
@@ -23,6 +24,11 @@ function App() {
       {/* About Section */}
       <section id="about" className="content-section about-section">
         <About />
+      </section>
+
+      {/* Projects Section */}
+      <section id="projects" className="content-section projects-section">
+        <Projects />
       </section>
       
       {/* Fixed Dock - stays at bottom */}

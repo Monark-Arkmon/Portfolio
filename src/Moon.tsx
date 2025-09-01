@@ -40,7 +40,6 @@ export function MoonModel({ position = [0, 0, 0], scale = 1, canvasWidth = 1920,
     const lightDirection = assetsConfig?.moon.materials?.lightDirection 
       ? assetsConfig.moon.materials.lightDirection
       : [0.0, 1.0, 0.5];
-    const shininess = assetsConfig?.moon.materials?.shininess;
     
     // Base moon radius calculations based on canvas size
     const canvasMinDimension = Math.min(canvasWidth, canvasHeight);
@@ -56,37 +55,59 @@ export function MoonModel({ position = [0, 0, 0], scale = 1, canvasWidth = 1920,
 
     return (
       <>
-        {/* Ambient light for overall illumination */}
-        <ambientLight intensity={0.3} color="#ffffff" />
+        {/* Ambient light for subtle base illumination */}
+        <ambientLight intensity={0.15} color="#e6e6fa" />
         
-        {/* Directional light from higher up (simulating sunlight from user/screen side) */}
+        {/* Main directional light (sun) */}
         <directionalLight 
-          position={lightDirection as [number, number, number]} 
-          intensity={2} 
-          color="#f7f7f7"
+          position={[lightDirection[0] * 5, lightDirection[1] * 5, lightDirection[2] * 5]} 
+          intensity={1.8} 
+          color="#fff8dc"
           castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-camera-near={0.1}
+          shadow-camera-far={50}
+          shadow-camera-left={-10}
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
         />
         
-        {/* Additional point light for subtle rim lighting */}
+        {/* Secondary fill light to reduce harsh shadows */}
+        <directionalLight 
+          position={[-lightDirection[0] * 2, lightDirection[1] * 2, lightDirection[2] * 3]} 
+          intensity={0.4} 
+          color="#b3c6ff"
+        />
+        
+        {/* Rim light for edge definition */}
         <pointLight 
           color="#ffffff" 
-          position={[2, 3, 4]} 
-          intensity={1} 
-          distance={15}
+          position={[lightDirection[0] * 3, lightDirection[1] * 4, lightDirection[2] * 6]} 
+          intensity={0.8} 
+          distance={25}
+          decay={2}
         />
   
-        {/* Moon Mesh */}
+        {/* Moon Mesh with higher resolution geometry */}
         <mesh 
           ref={moonRef} 
           position={position}
           castShadow 
           receiveShadow
         >
-          <sphereGeometry args={[moonRadius, 32, 32]} />
-          <meshPhongMaterial
+          {/* Higher resolution sphere for smoother edges */}
+          <sphereGeometry args={[moonRadius, 64, 64]} />
+          <meshStandardMaterial
             map={moonMap}
-            shininess={shininess} // Use shininess from config
-            specular={new THREE.Color(0x111111)} // Very low specular reflection
+            roughness={0.9} // Moon surface is quite rough
+            metalness={0.02} // Very slight metallic properties
+            normalScale={new THREE.Vector2(0.8, 0.8)} // If we had a normal map
+            bumpScale={0.02} // Use the diffuse map as a bump map for surface detail
+            emissive={new THREE.Color(0x000000)} // No self-emission
+            emissiveIntensity={0}
+            side={THREE.FrontSide}
           />
         </mesh>
       </>

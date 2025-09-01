@@ -1,16 +1,14 @@
 /* Skills Marquee Container */
 .skills-marquee-container {
   width: 100%;
-  padding: 2rem 0;
   background: transparent;
   position: relative;
-  padding-top: 3rem;
 }
 
 .skills-marquee-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 5rem;
+  gap: 3rem;
   width: 100%;
   overflow-x: hidden;
   overflow-y: visible;
@@ -36,7 +34,7 @@
   width: 100%;
   overflow: hidden;
   position: relative;
-  --gap: 1.5rem;
+  --gap: 2rem;
   overflow-y: visible;
 }
 
@@ -67,13 +65,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 10px;
   background: #222222;
   border: 1px solid #5f5f5f;
   transition: all 0.3s ease;
-  min-width: 230px;
-  min-height: 150px;
+  min-width: 180px;
+  min-height: 120px;
   white-space: nowrap;
   overflow: visible;
   z-index: 1;
@@ -86,8 +84,8 @@
 
 /* Skill Logo Image */
 .skill-logo {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
 }
 
@@ -113,31 +111,29 @@
   100% { 
     transform: translate3d(-33.333%, 0, 0); 
   }
-}/* Responsive Design */
-@media (max-width: 768px) {
-  .skills-marquee-container {
-    padding: 1.5rem 0;
-  }
-  
+}
+
+/* Responsive Design */
+@media (max-width: 768px) and (min-width: 481px) {
   .skills-marquee-wrapper {
     gap: 2.5rem;
   }
   
   .skill-card {
-    padding: 8px;
-    min-width: 140px; /* Increased from 70px */
-    min-height: 100px; /* Increased from 70px */
-    border-radius: 10px;
+    padding: 7px;
+    min-width: 150px;
+    min-height: 100px;
+    border-radius: 9px;
   }
   
   .skill-logo {
-    width: 80px; /* Increased from 40px */
-    height: 80px; /* Increased from 40px */
+    width: 80px;
+    height: 80px;
   }
 
   .skill-tooltip {
     font-size: 0.8rem;
-    padding: 4px 8px;
+    padding: 3px 6px;
   }
 }
 
@@ -148,14 +144,14 @@
   
   .skill-card {
     padding: 6px;
-    min-width: 120px; /* Increased from 60px */
-    min-height: 85px; /* Increased from 60px */
+    min-width: 120px;
+    min-height: 85px;
     border-radius: 8px;
   }
   
   .skill-logo {
-    width: 64px; /* Increased from 36px */
-    height: 64px; /* Increased from 36px */
+    width: 64px;
+    height: 64px;
   }
 
   .skill-tooltip {

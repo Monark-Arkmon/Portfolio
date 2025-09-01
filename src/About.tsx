@@ -51,29 +51,20 @@ const About: React.FC = () => {
       return null;
     }
     
-    // Calculate canvas dimensions based on layout - moon shows on all devices
+    // Calculate canvas dimensions based on layout - moon shows on all devices except mobile
     let canvasWidth, canvasHeight;
     
     if (isMobile) {
-      canvasWidth = width;
-      canvasHeight = Math.floor(height * 0.6); // 60% for bottom canvas on mobile
-      
-      return {
-        cameraPosition: [0, 0, 8] as [number, number, number],
-        modelPosition: [0, -5, 0] as [number, number, number],
-        modelScale: 0.8,
-        canvasWidth,
-        canvasHeight,
-        fov: 50
-      };
+      // No moon canvas on mobile devices
+      return null;
     } else if (isTablet) {
       canvasWidth = width;
       canvasHeight = Math.floor(height * 0.6); // 60% for bottom canvas
       
       return {
         cameraPosition: [0, 0, 10] as [number, number, number],
-        modelPosition: [0, -4, 0] as [number, number, number],
-        modelScale: 1,
+        modelPosition: [0, -5.5, 0] as [number, number, number],
+        modelScale: 2.3,
         canvasWidth,
         canvasHeight,
         fov: 45
@@ -84,8 +75,8 @@ const About: React.FC = () => {
       
       return {
         cameraPosition: [0, 0, 12] as [number, number, number],
-        modelPosition: [0, -4.5, 0] as [number, number, number],
-        modelScale: 1.2,
+        modelPosition: [0, -6.7, 0] as [number, number, number],
+        modelScale: 2.6,
         canvasWidth,
         canvasHeight,
         fov: 40
@@ -96,8 +87,8 @@ const About: React.FC = () => {
       
       return {
         cameraPosition: [0, 0, 15] as [number, number, number],
-        modelPosition: [0, -5, 0] as [number, number, number],
-        modelScale: 1.5,
+        modelPosition: [0, -9.5, 0] as [number, number, number],
+        modelScale: 2,
         canvasWidth,
         canvasHeight,
         fov: 35
