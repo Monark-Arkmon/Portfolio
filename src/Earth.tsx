@@ -32,6 +32,7 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
   const earthRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
   const earthShaderMaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const cloudsShaderMaterialRef = useRef<THREE.ShaderMaterial>(null);
 
   // Get rotation speeds from configuration
   const BASE_EARTH_ROTATION_SPEED = assetsConfig?.earth.animation.rotationSpeed;
@@ -62,7 +63,7 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
     const finalRadius = baseRadius * clampedScale;
     
     const earthRadius = Math.max(6, Math.min(finalRadius, 25));
-    const cloudsRadius = earthRadius * 1.005;
+    const cloudsRadius = earthRadius * 1.002; // Much closer to surface
     
     console.log(`Canvas: ${canvasWidth}x${canvasHeight}, Earth radius: ${earthRadius}, Scale: ${clampedScale}`);
 
@@ -84,24 +85,7 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
           distance={15}
         />
   
-        {/* Clouds Layer */}
-        <mesh 
-          ref={cloudsRef} 
-          position={position}
-          rotation={[0, initialYRotation, 0]} // Set initial rotation
-        >
-          <sphereGeometry args={[cloudsRadius, 32, 32]} />
-          <meshPhongMaterial
-            map={cloudsMap}
-            opacity={0.3}
-            depthWrite={true}
-            transparent={true}
-            side={THREE.DoubleSide}
-            shininess={50}
-          />
-        </mesh>
-        
-        {/* Earth Mesh */}
+        {/* Earth Mesh - Render first */}
         <mesh 
           ref={earthRef} 
           position={position}
@@ -109,7 +93,7 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
           castShadow 
           receiveShadow
         >
-          <sphereGeometry args={[earthRadius, 32, 32]} />
+          <sphereGeometry args={[earthRadius, 64, 64]} />
           <shaderMaterial 
             ref={earthShaderMaterialRef}
             uniforms={{
@@ -119,12 +103,12 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
               specularMap: { value: specularMap },
               lightDirection: { value: lightDirection },
               nightIntensity: { value: 1 },
-              terminatorBias: { value: -0.6 },
+              terminatorBias: { value: -0.55 },
               textureOffsetY: { value: 0.2 },
-              glowColor: { value: new THREE.Color(0.6, 0.8, 1.0) },
+              glowColor: { value: new THREE.Color(248 / 255, 225 / 255, 178 / 255) },
               glowIntensity: { value: 0.4 },
               glowPower: { value: 4.0 },
-              transitionWidth: { value: 0.4 }
+              transitionWidth: { value: 0.2 }
             }}
             vertexShader={`
               precision highp float;
@@ -187,6 +171,99 @@ export function Model({ position = [8, 0, 0], scale = 1, canvasWidth = 1920, can
                 finalColor += atmosphereGlow;
                 
                 gl_FragColor = vec4(finalColor, 1.0);
+              }
+            `}
+          />
+        </mesh>
+
+        {/* Clouds Layer - Render after Earth for proper transparency */}
+        <mesh 
+          ref={cloudsRef}
+          position={position}
+          rotation={[0, initialYRotation, 0]}
+          renderOrder={1}
+        >
+          <sphereGeometry args={[cloudsRadius, 64, 64]} />
+          <shaderMaterial
+            ref={cloudsShaderMaterialRef}
+            uniforms={{
+              cloudsTexture: { value: cloudsMap },
+              lightDirection: { value: lightDirection },
+              opacity: { value: 1.0 },
+              atmosphereColor: { value: new THREE.Color(0.8, 0.9, 1.0) },
+              cloudWhiteness: { value: 1.5 },
+              cloudBrightness: { value: 1.2 },
+              baseCloudColor: { value: new THREE.Color(1.0, 1.0, 1.0) }
+            }}
+            transparent={true}
+            depthWrite={false}
+            side={THREE.DoubleSide}
+            blending={THREE.NormalBlending}
+            vertexShader={`
+              precision highp float;
+              
+              varying vec2 vUv;
+              varying vec3 vWorldNormal;
+              varying vec3 vWorldPosition;
+              varying vec3 vViewDirection;
+              
+              void main() {
+                vUv = uv;
+                
+                vec4 worldPositionVec4 = modelMatrix * vec4(position, 1.0);
+                vWorldPosition = worldPositionVec4.xyz;
+                
+                vWorldNormal = normalize(mat3(modelMatrix) * normal);
+                vViewDirection = normalize(cameraPosition - vWorldPosition);
+                
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+              }
+            `}
+            fragmentShader={`
+              precision highp float;
+              
+              uniform sampler2D cloudsTexture;
+              uniform vec3 lightDirection;
+              uniform float opacity;
+              uniform vec3 atmosphereColor;
+              uniform float cloudWhiteness;
+              uniform float cloudBrightness;
+              uniform vec3 baseCloudColor;
+              
+              varying vec2 vUv;
+              varying vec3 vWorldNormal;
+              varying vec3 vViewDirection;
+              
+              void main() {
+                vec3 cloudsSample = texture2D(cloudsTexture, vUv).rgb;
+                
+                // Calculate lighting factor
+                float lightingFactor = max(0.2, dot(normalize(vWorldNormal), normalize(lightDirection)));
+                
+                // Calculate fresnel effect for atmospheric blending
+                float fresnelDot = dot(normalize(vViewDirection), normalize(vWorldNormal));
+                float fresnelEffect = 1.0 - clamp(fresnelDot, 0.0, 1.0);
+                
+                // Make clouds whiter by mixing with pure white
+                vec3 whitenedClouds = mix(cloudsSample, baseCloudColor, cloudWhiteness * 0.6);
+                
+                // Apply brightness enhancement
+                whitenedClouds *= cloudBrightness;
+                
+                // Subtle atmospheric scattering effect (reduced influence)
+                vec3 atmosphericGlow = atmosphereColor * fresnelEffect * 0.15;
+                
+                // Combine clouds with minimal atmospheric effects to maintain whiteness
+                vec3 finalColor = mix(whitenedClouds, whitenedClouds + atmosphericGlow, fresnelEffect * 0.3);
+                
+                // Ensure clouds stay bright and white
+                finalColor = clamp(finalColor, 0.0, 1.0);
+                
+                // Dynamic opacity based on cloud density and lighting
+                float cloudDensity = (cloudsSample.r + cloudsSample.g + cloudsSample.b) / 3.0;
+                float dynamicOpacity = opacity * cloudDensity * (0.4 + 0.6 * lightingFactor);
+                
+                gl_FragColor = vec4(finalColor, dynamicOpacity);
               }
             `}
           />
