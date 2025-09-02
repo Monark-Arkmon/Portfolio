@@ -243,6 +243,48 @@ export function useImageAssetFromPath(path: string | null): AssetState<string> {
 }
 
 /**
+ * Hook for fetching document URLs from JSON paths
+ */
+export function useDocumentAssetFromPath(path: string | null): AssetState<string> {
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!path) {
+      setData(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const url = await assetManager.fetchDocumentUrlFromPath(path);
+      setData(url);
+      setLoading(false);
+    } catch (error) {
+      setData(null);
+      setLoading(false);
+      setError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }, [path]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchData
+  };
+}
+
+/**
  * Hook for fetching document URLs (PDFs, etc.)
  */
 export function useDocumentAsset(

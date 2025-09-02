@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Model as EarthModel } from './Earth';
 import BouncingAstronaut from './BouncingAstronaut';
-import { useJsonAsset } from './utils/useAssets';
+import { useJsonAsset, useDocumentAssetFromPath } from './utils/useAssets';
 import TextMorph from './components/text-morph';
 import { ShimmerButton } from './components/shimmer-button';
 import { InteractiveHoverButton } from './components/interactive-hover-button';
@@ -21,6 +21,9 @@ const Hero: React.FC = () => {
 
   // Parse assets data for easy access  
   const documentsData = assetsConfig?.documents;
+  
+  // Get CV URL from AssetManager
+  const { data: cvUrl } = useDocumentAssetFromPath(documentsData?.cv || null);
 
   const [screenSize, setScreenSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 1920,
@@ -146,11 +149,12 @@ const Hero: React.FC = () => {
   };
 
   const handleDownloadCV = () => {
-    if (documentsData?.cv) {
-      // Use the asset path directly - the asset manager should handle this
+    if (cvUrl) {
+      // Use the proper CV URL from AssetManager
       const link = document.createElement('a');
-      link.href = `/${documentsData.cv}`;
+      link.href = cvUrl;
       link.download = 'CV_Arkapratim_Mondal.pdf';
+      link.target = '_blank'; // Open in new tab as fallback
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
