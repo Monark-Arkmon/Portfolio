@@ -79,12 +79,9 @@ const Experience: React.FC = () => {
     totalHeight += sectionPadding;
     
     // Ensure minimum height of viewport
-    const minHeight = window.innerHeight;
-    
-    // Add some extra buffer for safety
-    const bufferHeight = 20;
-    
-    return `${Math.max(totalHeight + bufferHeight, minHeight)}px`;
+    const minHeight = window.innerHeight / 2;
+
+    return `${Math.max(totalHeight, minHeight)}px`;
   };
 
   return (
@@ -119,7 +116,7 @@ const Experience: React.FC = () => {
             Experience
           </h2>
           <p className="experience-subtitle">
-            Professional journey and key contributions in software development and leadership roles.
+            My professional journey and learning experiences in software development and leadership roles.
           </p>
         </div>
       </div>
