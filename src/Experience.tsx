@@ -82,7 +82,7 @@ const Experience: React.FC = () => {
     const minHeight = window.innerHeight;
     
     // Add some extra buffer for safety
-    const bufferHeight = 100;
+    const bufferHeight = 20;
     
     return `${Math.max(totalHeight + bufferHeight, minHeight)}px`;
   };
