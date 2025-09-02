@@ -12,8 +12,21 @@ import './Dock.css';
 
 // Icon Components
 export const HomeIcon = () => (
-  <svg fill="currentColor" viewBox="0 0 24 24" className="h-full w-full">
+  <svg fill="currentColor" viewBox="0 0 22 22" className="h-full w-full">
     <path d="M12 3l9 7v11h-6v-6h-6v6H3V10l9-7z"/>
+  </svg>
+);
+
+export const ExperienceIcon = () => (
+  <svg fill="currentColor" viewBox="0 0 22 22" className="h-full w-full">
+    <path d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V8A2,2 0 0,1 4,6H8V4A2,2 0 0,1 10,2M14,6V4H10V6H14M4,8V19H20V8H4Z" />
+  </svg>
+);
+
+export const ProjectsIcon = () => (
+  <svg fill="currentColor" viewBox="0 0 22 22" className="h-full w-full">
+    <path d="M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4Z" />
+    <path d="M8,12V14H16V12H8M8,16V18H13V16H8Z" />
   </svg>
 );
 
@@ -163,11 +176,24 @@ export const Dock: React.FC<DockProps> = ({ className = "" }) => {
   const { data: heroData } = useJsonAsset('hero.json');
   const socialData = heroData?.social;
 
-  const dockItems = [
+  const homeItems = [
     { 
       icon: <HomeIcon />, 
       href: "#home",
       title: "Home"
+    },
+  ];
+
+  const navigationItems = [
+    { 
+      icon: <ExperienceIcon />, 
+      href: "#experience",
+      title: "Experience"
+    },
+    { 
+      icon: <ProjectsIcon />, 
+      href: "#projects",
+      title: "Projects"
     },
   ];
 
@@ -196,8 +222,19 @@ export const Dock: React.FC<DockProps> = ({ className = "" }) => {
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
       >
+        {/* Home Item */}
+        {homeItems.map((item, index) => (
+          <IconContainer 
+            key={`home-${index}`} 
+            href={item.href} 
+            mouseX={mouseX}
+            title={item.title}
+            icon={item.icon}
+          />
+        ))}
+        
         {/* Navigation Items */}
-        {dockItems.map((item, index) => (
+        {navigationItems.map((item, index) => (
           <IconContainer 
             key={`nav-${index}`} 
             href={item.href} 

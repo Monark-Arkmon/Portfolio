@@ -1,6 +1,7 @@
 import Hero from './Hero'
 import About from './About'
 import Projects from './Projects'
+import Experience from './Experience'
 import { StarsBackground } from './components/StarsBackground'
 import Dock from './components/Dock'
 import './App.css'
@@ -26,12 +27,17 @@ function App() {
         <About />
       </section>
 
+      {/* Experience Section */}
+      <section id="experience" className="content-section experience-section">
+        <Experience />
+      </section>
+
       {/* Projects Section */}
       <section id="projects" className="content-section projects-section">
         <Projects />
       </section>
       
-      {/* Fixed Dock - stays at bottom */}
+      {/* Sticky Dock - stays at bottom */}
       <Dock />
     </div>
   )
